@@ -1,8 +1,6 @@
 #include <Arduino.h>
 
 void setup() {
-  pinMode(3,OUTPUT);
-  pinMode(4,OUTPUT);
   Serial.begin(9600);
 }
 
