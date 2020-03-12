@@ -1,14 +1,29 @@
 #include <Arduino.h>
 
+  int LED = 13;
 void setup() {
-  Serial.begin(9600);
+  pinMode(LED,OUTPUT);
 }
 
 void loop() {
-  Serial.println("o");
+  digitalWrite(LED,1);
+  delay(250);
+  digitalWrite(LED,0);
+  delay(250);
+  digitalWrite(LED,1);
+  delay(250);
+  digitalWrite(LED,0);
+  delay(250);
+  digitalWrite(LED,1);
+  delay(250);
+  digitalWrite(LED,0);
+  delay(250);
+  digitalWrite(LED,1);
   delay(1000);
-  Serial.println("o/");
+  digitalWrite(LED,0);
   delay(1000);
-  Serial.println("o7");
-  delay(1000);
+  digitalWrite(LED,1);
+  delay(2000);
+  digitalWrite(LED,0);
+  delay(2000);
 }
