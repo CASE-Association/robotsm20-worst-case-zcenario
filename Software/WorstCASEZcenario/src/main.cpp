@@ -1,29 +1,18 @@
 #include <Arduino.h>
+#include <Servo.h>
 
-  int LED = 13;
+Servo myservo;  // create servo object to control a servo
+
+int potpin = 0;  // analog pin used to connect the potentiometer
+int val;    // variable to read the value from the analog pin
+
 void setup() {
-  pinMode(LED,OUTPUT);
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
 }
 
 void loop() {
-  digitalWrite(LED,1);
-  delay(250);
-  digitalWrite(LED,0);
-  delay(250);
-  digitalWrite(LED,1);
-  delay(250);
-  digitalWrite(LED,0);
-  delay(250);
-  digitalWrite(LED,1);
-  delay(250);
-  digitalWrite(LED,0);
-  delay(250);
-  digitalWrite(LED,1);
-  delay(1000);
-  digitalWrite(LED,0);
-  delay(1000);
-  digitalWrite(LED,1);
-  delay(2000);
-  digitalWrite(LED,0);
-  delay(2000);
+  val = analogRead(potpin);            // reads the value of the potentiometer (value between 0 and 1023)
+  val = map(val, 0, 1023, 30, 150);     // scale it to use it with the servo (value between 0 and 180)
+  myservo.write(val);                  // sets the servo position according to the scaled value
+  delay(15);                           // waits for the servo to get there
 }
