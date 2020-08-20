@@ -1,11 +1,11 @@
 #include <Arduino.h>
 #include <Servo.h>
-#include <Adafruit_VL53L0X.h>
+#include "Adafruit_VL53L0X.h"
+
+Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
 void setup() {
   Serial.begin(115200);
-  Adafruit_VL53L0X lox = Adafruit_VL53L0X();
-
   // wait until serial port opens for native USB devices
   while (! Serial) {
     delay(1);
@@ -31,6 +31,5 @@ void loop() {
   } else {
     Serial.println(" out of range ");
   }
-    
   delay(100);
 }
