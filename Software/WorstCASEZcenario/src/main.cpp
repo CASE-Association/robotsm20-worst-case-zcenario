@@ -1,18 +1,69 @@
 #include <Arduino.h>
 #include <Servo.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <VL53L0X.h>
 
-Servo myservo;  // create servo object to control a servo
+#define NUMPINS 2
 
-int potpin = 0;  // analog pin used to connect the potentiometer
-int val;    // variable to read the value from the analog pin
+VL53L0X tof[2] = {VL53L0X(), VL53L0X()};
+
+int tofpins[] = {2, 3};
+
 
 void setup() {
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  Serial.begin(9600);
+  
+  // wait until serial port opens for native USB devices
+  while (! Serial) {
+    delay(1);
+  }
+  
+  Wire.begin();
+
+  // Turn off all TOFs
+  for (int i = 0; i < NUMPINS; i++)
+  {
+    pinMode(tofpins[i], OUTPUT);
+    delay(10);
+    digitalWrite(tofpins[i], LOW);
+    delay(10);
+  }
+
+  // Setup all TOFs, assign different adresses
+  for (int i = 0; i < NUMPINS; i++)
+  {
+    // Turn on TOF[i]
+
+    digitalWrite(tofpins[i], HIGH);
+
+    // Setup TOF[i]
+    tof[i].setTimeout(500);
+    
+    if (!tof[i].init()) {
+      Serial.print("Failed to boot tof on pin: ");
+      Serial.println(tofpins[i]);
+      while(1);
+    }
+
+    tof[i].setAddress(0x30+i);
+    tof[i].startContinuous();
+
+    delay(10);
+  }
+  
+  Serial.println("setup complete");
+
+  delay(1000);
 }
 
+
 void loop() {
-  val = analogRead(potpin);            // reads the value of the potentiometer (value between 0 and 1023)
-  val = map(val, 0, 1023, 30, 150);     // scale it to use it with the servo (value between 0 and 180)
-  myservo.write(val);                  // sets the servo position according to the scaled value
-  delay(15);                           // waits for the servo to get there
+
+  for (int i = 0; i < NUMPINS; i++)
+  {
+    Serial.println(tof[i].readRangeContinuousMillimeters());
+    if (tof[i].timeoutOccurred()) { Serial.println("^ TIMEOUT"); }
+  }
 }
+
