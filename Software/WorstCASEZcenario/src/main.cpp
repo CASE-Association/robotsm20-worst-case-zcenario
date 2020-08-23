@@ -4,21 +4,17 @@
 #include <Wire.h>
 #include <VL53L0X.h>
 
-#define NUMPINS 2
+#define NUMPINS 3
 
-VL53L0X tof[2] = {VL53L0X(), VL53L0X()};
+VL53L0X tof[] = {VL53L0X(), VL53L0X(), VL53L0X()};
 
-int tofpins[] = {2, 3};
+int tofpins[] = {2, 3, 4};
+
+int dists[NUMPINS];
 
 
-void setup() {
-  Serial.begin(9600);
-  
-  // wait until serial port opens for native USB devices
-  while (! Serial) {
-    delay(1);
-  }
-  
+bool setup_tof() {
+
   Wire.begin();
 
   // Turn off all TOFs
@@ -43,7 +39,7 @@ void setup() {
     if (!tof[i].init()) {
       Serial.print("Failed to boot tof on pin: ");
       Serial.println(tofpins[i]);
-      while(1);
+      return(false);
     }
 
     tof[i].setAddress(0x30+i);
@@ -51,6 +47,27 @@ void setup() {
 
     delay(10);
   }
+
+  return(true);
+}
+
+void read_tof()
+{
+  for (int i = 0; i < NUMPINS; i++)
+  {
+    dists[i] = tof[i].readRangeContinuousMillimeters();
+  }
+  
+}
+void setup() {
+  Serial.begin(9600);
+  
+  // wait until serial port opens for native USB devices
+  while (! Serial) {
+    delay(1);
+  }
+  
+  if(!setup_tof()){ while(1); }
   
   Serial.println("setup complete");
 
@@ -60,10 +77,16 @@ void setup() {
 
 void loop() {
 
+  read_tof();
+
   for (int i = 0; i < NUMPINS; i++)
   {
-    Serial.println(tof[i].readRangeContinuousMillimeters());
-    if (tof[i].timeoutOccurred()) { Serial.println("^ TIMEOUT"); }
+    Serial.print(dists[i]);
+    Serial.print(", ");
   }
+
+  Serial.println();
+
+  delay(1000);
 }
 
