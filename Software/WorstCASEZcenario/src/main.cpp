@@ -12,8 +12,14 @@ int tofpins[] = {2, 3, 4};
 
 int dists[NUMPINS];
 
+int M_in1 = 9;
+int M_in2 = 10;
+int M_pwm = 11;
 
-bool setup_tof() {
+int potPin = 3;
+
+
+bool tof_setup() {
 
   Wire.begin();
 
@@ -30,7 +36,6 @@ bool setup_tof() {
   for (int i = 0; i < NUMPINS; i++)
   {
     // Turn on TOF[i]
-
     digitalWrite(tofpins[i], HIGH);
 
     // Setup TOF[i]
@@ -51,7 +56,7 @@ bool setup_tof() {
   return(true);
 }
 
-void read_tof()
+void tof_read()
 {
   for (int i = 0; i < NUMPINS; i++)
   {
@@ -59,25 +64,46 @@ void read_tof()
   }
   
 }
+
+void motor_setup()
+{
+  pinMode(M_in1, OUTPUT);
+  pinMode(M_in2, OUTPUT);
+  pinMode(M_pwm, OUTPUT);
+
+  digitalWrite(M_in1, HIGH);
+  digitalWrite(M_in2, LOW);
+}
+
+
 void setup() {
   Serial.begin(9600);
   
-  // wait until serial port opens for native USB devices
-  while (! Serial) {
-    delay(1);
-  }
-  
-  if(!setup_tof()){ while(1); }
+  /*
+  motor_setup();
+
+  if(!tof_setup()){ while(1); }
   
   Serial.println("setup complete");
 
   delay(1000);
+  */
 }
 
 
 void loop() {
 
-  read_tof();
+  /*
+  int speed = analogRead(potPin)/4;
+
+  analogWrite(M_pwm, speed);
+
+  delay(50);
+  */
+
+
+  /*
+  tof_read();
 
   for (int i = 0; i < NUMPINS; i++)
   {
@@ -88,5 +114,6 @@ void loop() {
   Serial.println();
 
   delay(1000);
+  */
 }
 
