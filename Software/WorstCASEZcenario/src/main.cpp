@@ -18,7 +18,6 @@ int M_pwm = 11;
 
 int potPin = 3;
 
-
 bool tof_setup() {
 
   Wire.begin();
@@ -75,10 +74,8 @@ void motor_setup()
   digitalWrite(M_in2, LOW);
 }
 
-
 void setup() {
   Serial.begin(9600);
-  
   /*
   motor_setup();
 
@@ -89,7 +86,6 @@ void setup() {
   delay(1000);
   */
 }
-
 
 void loop() {
 
@@ -116,4 +112,3 @@ void loop() {
   delay(1000);
   */
 }
-
