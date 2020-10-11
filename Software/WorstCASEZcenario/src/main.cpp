@@ -7,16 +7,20 @@
 #define NUMPINS 3
 
 VL53L0X tof[] = {VL53L0X(), VL53L0X(), VL53L0X()};
+Servo steering;
 
-int tofpins[] = {2, 3, 4};
+int tofpins[] = {2,3,4};
 
 int dists[NUMPINS];
 
 int M_in1 = 9;
 int M_in2 = 10;
 int M_pwm = 11;
+int M_Stby = 12;
 
-int potPin = 3;
+int steerpin = 5;
+
+int ang;
 
 bool tof_setup() {
 
@@ -26,9 +30,9 @@ bool tof_setup() {
   for (int i = 0; i < NUMPINS; i++)
   {
     pinMode(tofpins[i], OUTPUT);
-    delay(10);
+    delay(100);
     digitalWrite(tofpins[i], LOW);
-    delay(10);
+    delay(100);
   }
 
   // Setup all TOFs, assign different adresses
@@ -36,6 +40,7 @@ bool tof_setup() {
   {
     // Turn on TOF[i]
     digitalWrite(tofpins[i], HIGH);
+    delay(100);
 
     // Setup TOF[i]
     tof[i].setTimeout(500);
@@ -49,7 +54,7 @@ bool tof_setup() {
     tof[i].setAddress(0x30+i);
     tof[i].startContinuous();
 
-    delay(10);
+    delay(100);
   }
 
   return(true);
@@ -69,38 +74,46 @@ void motor_setup()
   pinMode(M_in1, OUTPUT);
   pinMode(M_in2, OUTPUT);
   pinMode(M_pwm, OUTPUT);
+  pinMode(M_Stby, OUTPUT);
 
+  digitalWrite(M_Stby, HIGH);
   digitalWrite(M_in1, HIGH);
   digitalWrite(M_in2, LOW);
 }
 
 void setup() {
-  Serial.begin(9600);
-  /*
+  Serial.begin(115200);
+
   motor_setup();
+
+  steering.attach(steerpin);
 
   if(!tof_setup()){ while(1); }
   
   Serial.println("setup complete");
 
   delay(1000);
-  */
 }
 
 void loop() {
-
-  /*
-  int speed = analogRead(potPin)/4;
-
-  analogWrite(M_pwm, speed);
-
-  delay(50);
-  */
-
-
-  /*
+  
   tof_read();
 
+  int speed = dists[1]/4;
+  speed = constrain(speed, 0, 128);
+
+  analogWrite(M_pwm, speed);
+  //Serial.println(speed);
+
+  
+  int sidediff = dists[0] - dists[2];
+  ang = map(sidediff, -200, 200, -45, 45);
+
+  ang = 90 + constrain(ang, -45, 45);
+  steering.write(ang);
+  
+
+  /*
   for (int i = 0; i < NUMPINS; i++)
   {
     Serial.print(dists[i]);
@@ -108,7 +121,7 @@ void loop() {
   }
 
   Serial.println();
-
-  delay(1000);
   */
+
+  delay(50);
 }
